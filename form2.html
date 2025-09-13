@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Adaptive Learning Platform — Improved HTML/CSS</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#fff;
+      --muted:#6b7280;
+      --accent:#2563eb;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:linear-gradient(180deg,#f9fafb,#eef2ff);
+      color:#111;
+      line-height:1.5;
+    }
+    .wrap{max-width:1200px;margin:32px auto;padding:20px}
+    header{text-align:center;margin-bottom:24px}
+    header h1{font-size:26px;font-weight:700;margin-bottom:8px;color:#1e293b}
+    header p{color:var(--muted);font-size:15px}
+
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+    .card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(16,24,40,0.08);transition:transform .2s ease}
+    .card:hover{transform:translateY(-2px)}
+
+    label.file{display:inline-block;padding:10px 16px;border-radius:10px;background:linear-gradient(180deg,#fff,#f9fafb);cursor:pointer;border:2px dashed #dbeafe;font-size:14px;color:#0f172a;font-weight:500;transition:background .2s}
+    label.file:hover{background:#f1f5f9}
+    input[type=file]{display:none}
+    .muted{color:var(--muted);font-size:13px}
+
+    .doc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px}
+    .summary{background:#f9fafc;padding:14px;border-radius:10px;border:1px solid #e2e8f0;font-size:14px;color:#0f172a;margin-top:8px}
+
+    .keywords{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .kw{background:#e0e7ff;padding:6px 12px;border-radius:999px;font-size:13px;color:#1e3a8a;font-weight:500;transition:background .2s}
+    .kw:hover{background:#c7d2fe}
+
+    .section-title{font-weight:600;margin:14px 0 6px;font-size:15px;color:#1e293b}
+
+    .question{border-radius:12px;padding:14px;border:1px solid #e2e8f0;margin-bottom:12px;background:#fafbff}
+    .options{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .opt{display:flex;align-items:center;gap:8px;font-size:14px}
+
+    .btn{display:inline-block;padding:10px 16px;border-radius:10px;background:var(--accent);color:white;text-decoration:none;border:none;cursor:pointer;font-size:14px;font-weight:500;transition:background .2s}
+    .btn:hover{background:#1d4ed8}
+    .btn.secondary{background:#fff;border:1px solid #e2e8f0;color:#0f172a}
+    .btn.secondary:hover{background:#f9fafb}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+    textarea{width:100%;min-height:80px;padding:10px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;resize:vertical;margin-top:8px}
+    .notes-list{margin-top:10px;font-size:13px;color:#0f172a}
+    .note{background:#f1f5f9;padding:8px 10px;border-radius:8px;margin-bottom:6px}
+
+    aside .small{font-size:13px;color:var(--muted)}
+
+    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
+
+    @media(max-width:950px){.grid{grid-template-columns:1fr}aside{order:2}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Adaptive Learning Platform — Improved Prototype</h1>
+      <p>Upload documents, auto-generate summaries, extract keywords, build quick quizzes, and track your learning progress.</p>
+    </header>
+
+    <div class="grid">
+      <main class="card">
+        <label class="file">Upload Document (.txt, .md, .pdf*)
+          <input id="file" type="file" accept=".txt,.md,application/pdf">
+        </label>
+        <div class="muted" style="margin-top:6px">*PDFs detected but not parsed. Use .txt or .md for full features.</div>
+
+        <div class="doc-meta">
+          <div>
+            <div class="muted">Document</div>
+            <div id="docName" style="font-weight:600;font-size:14px">No file loaded</div>
+          </div>
+          <div class="controls">
+            <button id="genAI" class="btn secondary">Regenerate</button>
+            <button id="exportCSV" class="btn">Export Progress</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title">Summary</div>
+          <div id="summary" class="summary">No content processed yet.</div>
+        </div>
+
+        <div>
+          <div class="section-title">Keywords</div>
+          <div id="keywords" class="keywords"><span class="muted">No keywords yet</span></div>
+        </div>
+
+        <div>
+          <div class="section-title">Assessment</div>
+          <div id="questionsWrap">No assessment generated.</div>
+          <div class="controls">
+            <button id="gradeBtn" class="btn">Grade Quiz</button>
+            <div id="result" class="muted"></div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="card">
+        <div>
+          <div class="section-title">Progress</div>
+          <div id="progressInfo" class="small">No attempts yet</div>
+
+          <textarea id="progressInput" placeholder="Write your study notes or progress here..."></textarea>
+          <div class="controls">
+            <button id="saveProgress" class="btn">Save Note</button>
+          </div>
+          <div id="notesList" class="notes-list"></div>
+        </div>
+
+        <div>
+          <div class="section-title">Recommendations</div>
+          <div id="recs" class="small">Recommendations will appear after grading.</div>
+        </div>
+
+        <div>
+          <div class="section-title">How it works</div>
+          <ol style="padding-left:18px;color:var(--muted);font-size:13px">
+            <li>Upload a text/.md file.</li>
+            <li>System generates summary, keywords, and quiz questions.</li>
+            <li>Answer and grade to log your progress.</li>
+            <li>Write and save your own progress notes in the box above.</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Note: This is a static prototype. For smarter question generation, integrate AI on the backend.
+    </footer>
+  </div>
+
+  <script>
+    // Simple localStorage handling for notes
+    const saveBtn = document.getElementById('saveProgress');
+    const notesList = document.getElementById('notesList');
+    const progressInput = document.getElementById('progressInput');
+
+    function loadNotes(){
+      const notes = JSON.parse(localStorage.getItem('progressNotes')||'[]');
+      notesList.innerHTML = notes.map(n=>`<div class="note">${n}</div>`).join('');
+    }
+
+    saveBtn.addEventListener('click',()=>{
+      const text = progressInput.value.trim();
+      if(!text) return;
+      const notes = JSON.parse(localStorage.getItem('progressNotes')||'[]');
+      notes.push(text);
+      localStorage.setItem('progressNotes',JSON.stringify(notes));
+      progressInput.value = '';
+      loadNotes();
+    });
+
+    loadNotes();
+  </script>
+</body>
+</html>
